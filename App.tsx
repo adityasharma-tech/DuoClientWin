@@ -1,118 +1,96 @@
-/**
- * Sample React Native App
- * https://github.com/facebook/react-native
- *
- * @format
- */
+import React, {useEffect} from 'react';
+import TCPSocket from 'react-native-tcp-socket';
+import {ConnectionOptions} from 'react-native-tcp-socket/lib/types/Socket';
+import {Text, TextInput, TouchableOpacity, View} from 'react-native-windows';
 
-import React from 'react';
-import type {PropsWithChildren} from 'react';
-import {
-  SafeAreaView,
-  ScrollView,
-  StatusBar,
-  StyleSheet,
-  Text,
-  useColorScheme,
-  View,
-} from 'react-native';
+export default function App() {
+  React.useCallback(() => {
+    const options: ConnectionOptions = {
+      port: 8002,
+    };
+    const client = TCPSocket.createConnection(options, () => {
+      client.destroy();
+    });
+  }, []);
 
-import {
-  Colors,
-  DebugInstructions,
-  Header,
-  LearnMoreLinks,
-  ReloadInstructions,
-} from 'react-native/Libraries/NewAppScreen';
-
-type SectionProps = PropsWithChildren<{
-  title: string;
-}>;
-
-function Section({children, title}: SectionProps): React.JSX.Element {
-  const isDarkMode = useColorScheme() === 'dark';
   return (
-    <View style={styles.sectionContainer}>
-      <Text
-        style={[
-          styles.sectionTitle,
-          {
-            color: isDarkMode ? Colors.white : Colors.black,
-          },
-        ]}>
-        {title}
-      </Text>
-      <Text
-        style={[
-          styles.sectionDescription,
-          {
-            color: isDarkMode ? Colors.light : Colors.dark,
-          },
-        ]}>
-        {children}
-      </Text>
+    <View
+      style={{
+        padding: 20,
+        backgroundColor: '#f4f2f5',
+        height: '100%',
+      }}>
+      <View
+        style={{
+          width: 400,
+          height: 'auto',
+          paddingBottom: 15,
+          borderRadius: 10,
+          backgroundColor: '#ffffff',
+          borderWidth: 0.5,
+          borderColor: '#d7dbdd',
+          paddingHorizontal: 14,
+          paddingVertical: 10,
+        }}>
+        <Text
+          style={{
+            fontWeight: '500',
+            fontSize: 16,
+            marginBottom: 10,
+          }}>
+          Connect by address
+        </Text>
+        <Text
+          style={{
+            fontSize: 12,
+            color: '#979a9a',
+          }}>
+          IP Address or hostname
+        </Text>
+        <View
+          style={{
+            marginTop: 3,
+            width: '100%',
+            flexDirection: 'row',
+            justifyContent: 'space-between',
+          }}>
+          <TextInput
+            placeholder="192.168.x.x"
+            onFocus={() => null}
+            style={{
+              paddingHorizontal: 10,
+              borderRadius: 5,
+              backgroundColor: 'white',
+              borderWidth: 0.5,
+              width: '72%',
+              height: 35,
+              paddingTop: 8,
+              fontSize: 16,
+            }}
+            cursorColor={'#000'}
+          />
+          <TouchableOpacity
+            activeOpacity={0.8}
+            style={{
+              justifyContent: 'center',
+              backgroundColor: '#7d3c98',
+              paddingHorizontal: 16,
+              borderRadius: 5,
+              borderWidth: 0.5,
+              borderColor: '#4a235a',
+              height: 35,
+            }}>
+            <Text
+              style={{
+                textAlign: 'center',
+                color: 'white',
+                fontSize: 16,
+              }}>
+              Connect
+            </Text>
+          </TouchableOpacity>
+        </View>
+      </View>
     </View>
   );
 }
-
-function App(): React.JSX.Element {
-  const isDarkMode = useColorScheme() === 'dark';
-
-  const backgroundStyle = {
-    backgroundColor: isDarkMode ? Colors.darker : Colors.lighter,
-  };
-
-  return (
-    <SafeAreaView style={backgroundStyle}>
-      <StatusBar
-        barStyle={isDarkMode ? 'light-content' : 'dark-content'}
-        backgroundColor={backgroundStyle.backgroundColor}
-      />
-      <ScrollView
-        contentInsetAdjustmentBehavior="automatic"
-        style={backgroundStyle}>
-        <Header />
-        <View
-          style={{
-            backgroundColor: isDarkMode ? Colors.black : Colors.white,
-          }}>
-          <Section title="Step One">
-            Edit <Text style={styles.highlight}>App.tsx</Text> to change this
-            screen and then come back to see your edits.
-          </Section>
-          <Section title="See Your Changes">
-            <ReloadInstructions />
-          </Section>
-          <Section title="Debug">
-            <DebugInstructions />
-          </Section>
-          <Section title="Learn More">
-            Read the docs to discover what to do next:
-          </Section>
-          <LearnMoreLinks />
-        </View>
-      </ScrollView>
-    </SafeAreaView>
-  );
-}
-
-const styles = StyleSheet.create({
-  sectionContainer: {
-    marginTop: 32,
-    paddingHorizontal: 24,
-  },
-  sectionTitle: {
-    fontSize: 24,
-    fontWeight: '600',
-  },
-  sectionDescription: {
-    marginTop: 8,
-    fontSize: 18,
-    fontWeight: '400',
-  },
-  highlight: {
-    fontWeight: '700',
-  },
-});
-
-export default App;
