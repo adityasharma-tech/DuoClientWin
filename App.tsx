@@ -1,17 +1,41 @@
-import React, {useEffect} from 'react';
+import React, {useEffect, useState} from 'react';
 import TCPSocket from 'react-native-tcp-socket';
 import {ConnectionOptions} from 'react-native-tcp-socket/lib/types/Socket';
 import {Text, TextInput, TouchableOpacity, View} from 'react-native-windows';
+import net from 'node:net'
 
 export default function App() {
-  React.useCallback(() => {
+  const [hostnameInput, setHostnameInput] = useState('')
+
+  const onTCPData = React.useCallback((data: string | Buffer<ArrayBufferLike>)=>{
+    console.log('client.data', data.toString())
+  }, [])
+
+  const onTCPConnect = React.useCallback(()=>{
+    console.log('client.connect')
+  }, [])
+
+  const onTCPErr = React.useCallback((data: Error)=>{
+    console.log('client.err', data.toString())
+  }, [])
+
+  const connectTCP = React.useCallback(() => {
     const options: ConnectionOptions = {
       port: 8002,
+      host: hostnameInput
     };
-    const client = TCPSocket.createConnection(options, () => {
-      client.destroy();
+    const client = net.createConnection(options, () => {
+      console.log("Client connected successfully.")
     });
-  }, []);
+    client.on('data', onTCPData)
+    client.on('connect',onTCPConnect)
+    client.on('error', onTCPErr)
+    return ()=>{
+      client.off('data', onTCPData)
+      client.off('connect', onTCPConnect)
+      client.off('error', onTCPErr)
+    }
+  }, [net, hostnameInput, onTCPData, onTCPConnect, onTCPErr]);
 
   return (
     <View
@@ -56,7 +80,8 @@ export default function App() {
           }}>
           <TextInput
             placeholder="192.168.x.x"
-            onFocus={() => null}
+            onChangeText={setHostnameInput}
+            value={hostnameInput}
             style={{
               paddingHorizontal: 10,
               borderRadius: 5,
@@ -71,6 +96,8 @@ export default function App() {
           />
           <TouchableOpacity
             activeOpacity={0.8}
+            onPress={connectTCP}
+            disabled={hostnameInput.trim()==""}
             style={{
               justifyContent: 'center',
               backgroundColor: '#7d3c98',
@@ -79,6 +106,7 @@ export default function App() {
               borderWidth: 0.5,
               borderColor: '#4a235a',
               height: 35,
+              opacity: hostnameInput.trim()=="" ? 0.5 : 1
             }}>
             <Text
               style={{
