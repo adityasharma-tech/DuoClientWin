@@ -2,7 +2,6 @@ import React, {useEffect, useState} from 'react';
 import TCPSocket from 'react-native-tcp-socket';
 import {ConnectionOptions} from 'react-native-tcp-socket/lib/types/Socket';
 import {Text, TextInput, TouchableOpacity, View} from 'react-native-windows';
-import net from 'node:net'
 
 export default function App() {
   const [hostnameInput, setHostnameInput] = useState('')
@@ -24,7 +23,7 @@ export default function App() {
       port: 8002,
       host: hostnameInput
     };
-    const client = net.createConnection(options, () => {
+    const client = TCPSocket.createConnection(options, () => {
       console.log("Client connected successfully.")
     });
     client.on('data', onTCPData)
@@ -35,7 +34,7 @@ export default function App() {
       client.off('connect', onTCPConnect)
       client.off('error', onTCPErr)
     }
-  }, [net, hostnameInput, onTCPData, onTCPConnect, onTCPErr]);
+  }, [TCPSocket, hostnameInput, onTCPData, onTCPConnect, onTCPErr]);
 
   return (
     <View
